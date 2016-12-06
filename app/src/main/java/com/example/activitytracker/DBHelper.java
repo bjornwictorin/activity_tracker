@@ -15,13 +15,13 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE positions (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+        db.execSQL("CREATE TABLE locations (_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
         "latitude REAL, longitude REAL, altitude REAL, timestamp INTEGER");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS positions");
+        db.execSQL("DROP TABLE IF EXISTS locations");
         onCreate(db);
     }
 }

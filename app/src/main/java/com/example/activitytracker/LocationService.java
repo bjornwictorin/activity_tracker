@@ -21,7 +21,7 @@ public class LocationService extends Service {
         Log.d("G53MDP", "LocationService onCreate");
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        locationListener = new MyLocationListener();
+        locationListener = new MyLocationListener(this);
         //Register the locationsListener, which will listen to the GPS updates.
         try {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5, 5, locationListener);

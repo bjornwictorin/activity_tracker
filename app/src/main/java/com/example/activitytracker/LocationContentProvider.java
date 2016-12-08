@@ -24,7 +24,7 @@ public class LocationContentProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        this.dbHelper = new DBHelper(this.getContext(), "locationDB", null, 1);
+        this.dbHelper = new DBHelper(this.getContext(), "locationDB", null, 3);
         return true;
     }
 

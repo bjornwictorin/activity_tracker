@@ -8,8 +8,10 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
     private LocationService.MyBinder locationServiceBinder = null;
@@ -36,6 +38,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public void distanceTodayOnClick(View v) {
+        TextView textView = (TextView) findViewById(R.id.distance_today);
+        double distanceToday = locationServiceBinder.distanceToday();
+        textView.setText(distanceToday + " metres");
     }
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -73,5 +81,15 @@ public class MainActivity extends AppCompatActivity {
         //Stop the service.
         Intent intent = new Intent(MainActivity.this, LocationService.class);
         stopService(intent);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (serviceConnection != null) {
+            unbindService(serviceConnection);
+            //serviceConnection is set to null in order to avoid memory leaks.
+            serviceConnection = null;
+        }
     }
 }

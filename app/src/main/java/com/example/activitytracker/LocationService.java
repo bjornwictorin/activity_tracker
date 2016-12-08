@@ -5,6 +5,8 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.location.Location;
 import android.location.LocationManager;
 import android.os.Binder;
 import android.os.IBinder;
@@ -60,6 +62,46 @@ public class LocationService extends Service {
         //Place the methods that should be callable from activities here.
         void test() {
             Log.d("G53MDP", "test method in LocationService called");
+        }
+        double distanceToday() {
+            //Calculate the distance that the device has moved during the specified day.
+            //Fetch all locations that were recorded today from the database.
+            String[] projection = {LocationProviderContract._ID, LocationProviderContract.LONGITUDE,
+                    LocationProviderContract.LATITUDE};
+            String selection = " date(" + LocationProviderContract.TIMESTAMP + ") = date(CURRENT_TIMESTAMP)";
+            Cursor cursor = getContentResolver().query(LocationProviderContract.LOCATION_URI,
+                    projection, selection, null, null);
+            //Print all today's longitudes to the screen.
+            Log.d("G53MDP", "Cursor count: " + cursor.getCount());
+            //Calculate the distance for today.
+            double distanceToday = 0;
+            Location startLocation = new Location("");
+            Location endLocation = new Location("");
+            //At least two points are needed to calculate a distance, hence the comparison > 1.
+            if (cursor.getCount() > 1) {
+                cursor.moveToFirst();
+                startLocation.setLongitude(cursor.getFloat(1));
+                startLocation.setLatitude(cursor.getFloat(2));
+                for (int i = 1; i < cursor.getCount(); i++) {
+                    cursor.moveToNext();
+                    endLocation.setLongitude(cursor.getFloat(1));
+                    endLocation.setLatitude(cursor.getFloat(2));
+                    double distance = startLocation.distanceTo(endLocation);
+                    Log.d("G53MDP", "distance: " + distance);
+                    distanceToday += distance;
+                    startLocation = new Location(endLocation);
+                }
+            }
+            /*
+            if (cursor.moveToFirst()) {
+                do {
+
+                    int temp = cursor.getInt(1);
+                    Log.d("G53MDP", "Longitude: " + temp);
+                } while (cursor.moveToNext());
+            }*/
+            cursor.close();
+            return distanceToday;
         }
     }
 }

@@ -4,11 +4,13 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
+import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
 public class LocationService extends Service {
 
+    private final IBinder binder = new MyBinder();
     LocationManager locationManager;
     MyLocationListener locationListener;
 
@@ -33,6 +35,13 @@ public class LocationService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
-        throw new UnsupportedOperationException("Not yet implemented");
+        return binder;
+    }
+
+    public class MyBinder extends Binder {
+        //Place the methods that should be callable from activities here.
+        void test() {
+            Log.d("G53MDP", "test method in LocationService called");
+        }
     }
 }

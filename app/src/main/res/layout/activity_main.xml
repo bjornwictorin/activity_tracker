@@ -10,8 +10,12 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.activitytracker.MainActivity">
 
-    <TextView
+    <Switch
+        android:text="@string/turn_logging_off"
+        android:switchPadding="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:layout_alignParentStart="true"
+        android:checked="true"
+        android:id="@+id/log_switch" />
 </RelativeLayout>

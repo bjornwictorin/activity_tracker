@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ActivityTracker</string>
+    <string name="turn_logging_on">Turn logging on</string>
+    <string name="turn_logging_off">Turn logging off</string>
 </resources>

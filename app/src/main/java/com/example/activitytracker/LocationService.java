@@ -33,8 +33,15 @@ public class LocationService extends Service {
     }
 
     @Override
+    public void onDestroy() {
+        Log.d("G53MDP", "LocationService onDestroy");
+        super.onDestroy();
+    }
+
+    @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
+        Log.d("G53MDP", "onBind");
         return binder;
     }
 

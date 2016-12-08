@@ -19,12 +19,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //Start the location service.
-        Intent intent = new Intent(this, LocationService.class);
-        startService(intent);
-
-        //Bind to the location service.
-        this.bindService(new Intent(this, LocationService.class), serviceConnection,
-                Context.BIND_AUTO_CREATE);
+        startLocationService();
 
         //Set up the handling of clicks on the switch that turns logging on and off.
         final Switch logSwitch = (Switch) findViewById(R.id.log_switch);
@@ -32,12 +27,12 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     logSwitch.setText(R.string.turn_logging_off);
-                    //Turn the logging on.
-                    locationServiceBinder.test();
+                    //Turn the logging on by starting the location service.
+                    startLocationService();
                 } else {
                     logSwitch.setText(R.string.turn_logging_on);
-                    //Turn the logging off.
-
+                    //Turn the logging off by stopping the location service.
+                    stopLocationService();
                 }
             }
         });
@@ -56,4 +51,27 @@ public class MainActivity extends AppCompatActivity {
             locationServiceBinder = null;
         }
     };
+
+    private void startLocationService() {
+        Log.d("G53MDP", "startLocationService");
+        //Start the location service.
+        Intent intent = new Intent(this, LocationService.class);
+        startService(intent);
+
+        //Bind to the location service.
+        this.bindService(new Intent(this, LocationService.class), serviceConnection,
+                Context.BIND_AUTO_CREATE);
+    }
+
+    private void stopLocationService() {
+        //Unbind from the service.
+        if (serviceConnection != null) {
+            Log.d("G53MDP", "unbinding from service");
+            unbindService(serviceConnection);
+            locationServiceBinder = null;
+        }
+        //Stop the service.
+        Intent intent = new Intent(MainActivity.this, LocationService.class);
+        stopService(intent);
+    }
 }

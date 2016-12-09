@@ -74,11 +74,31 @@ public class LocationContentProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        throw new UnsupportedOperationException("update is not implemented");
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        String tableName;
+        switch (uriMatcher.match(uri)) {
+            case 1:
+                tableName = "locations";
+                break;
+            default:
+                tableName = "locations";
+                break;
+        }
+        return db.update(tableName, values, selection, selectionArgs);
     }
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        throw new UnsupportedOperationException("delete is not implented");
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        String tableName;
+        switch (uriMatcher.match(uri)) {
+            case 1:
+                tableName = "locations";
+                break;
+            default:
+                tableName = "locations";
+                break;
+        }
+        return db.delete(tableName, selection, selectionArgs);
     }
 }

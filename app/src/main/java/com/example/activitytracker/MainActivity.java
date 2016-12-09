@@ -4,17 +4,22 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.database.ContentObserver;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
     private LocationService.MyBinder locationServiceBinder = null;
+    //The handler is needed to let myObserver make changes to the UI.
+    private Handler h = new Handler();
+    private MyObserver myObserver = new MyObserver(h);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +27,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         //Start the location service.
         startLocationService();
+
+        //Register the ContentObserver to listen to changes in the database.
+        getContentResolver().registerContentObserver(LocationProviderContract.LOCATION_URI, true,
+                myObserver);
 
         //Set up the handling of clicks on the switch that turns logging on and off.
         final Switch logSwitch = (Switch) findViewById(R.id.log_switch);
@@ -40,10 +49,30 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void distanceTodayOnClick(View v) {
+    public void updateDistanceToday() {
         TextView textView = (TextView) findViewById(R.id.distance_today);
-        double distanceToday = locationServiceBinder.distanceToday();
-        textView.setText(distanceToday + " metres");
+        double distanceTodayInMetres = locationServiceBinder.distanceToday();
+        double distanceTodayInKilometres = distanceTodayInMetres / 1000;
+        //Only show two decimal places.
+        String distanceFormatted = String.format("%.2f", distanceTodayInKilometres);
+        textView.setText(getString(R.string.distance_today) + " " + distanceFormatted + " km");
+    }
+
+    //The purpose of this class is to update the distance values showed in the activity only when
+    // data has changed.
+    private class MyObserver extends ContentObserver {
+        public MyObserver(Handler handler) {
+            super(handler);
+        }
+        @Override
+        public void onChange(boolean selfChange) {
+            this.onChange(selfChange, null);
+        }
+        @Override
+        public void onChange(boolean selfChange, Uri uri) {
+            Log.d("G53MDP", "MyObserver onChange");
+            updateDistanceToday();
+        }
     }
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -51,6 +80,9 @@ public class MainActivity extends AppCompatActivity {
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.d("G53MDP", "onServiceConnected");
             locationServiceBinder = (LocationService.MyBinder) service;
+            //Update the value of the distance moved today as soon as the activity is connected to
+            // the content provider.
+            updateDistanceToday();
         }
 
         @Override

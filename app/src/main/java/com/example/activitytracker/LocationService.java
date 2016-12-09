@@ -92,14 +92,6 @@ public class LocationService extends Service {
                     startLocation = new Location(endLocation);
                 }
             }
-            /*
-            if (cursor.moveToFirst()) {
-                do {
-
-                    int temp = cursor.getInt(1);
-                    Log.d("G53MDP", "Longitude: " + temp);
-                } while (cursor.moveToNext());
-            }*/
             cursor.close();
             return distanceToday;
         }

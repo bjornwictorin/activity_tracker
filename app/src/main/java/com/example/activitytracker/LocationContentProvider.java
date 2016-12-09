@@ -51,6 +51,8 @@ public class LocationContentProvider extends ContentProvider {
         }
         long id = db.insert(tableName, null, values);
         Uri nu = ContentUris.withAppendedId(uri, id);
+        //Notify ContentObservers that the data in the db has changed.
+        getContext().getContentResolver().notifyChange(nu, null);
         return nu;
     }
 

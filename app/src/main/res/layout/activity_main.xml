@@ -13,6 +13,7 @@
 
     <Switch
         android:text="@string/turn_logging_off"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
         android:switchPadding="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -20,19 +21,10 @@
         android:checked="true"
         android:id="@+id/log_switch" />
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Check distance today"
-        android:onClick="distanceTodayOnClick" />
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/distance_today"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+        android:layout_gravity="left"
         android:id="@+id/distance_today" />
 </LinearLayout>

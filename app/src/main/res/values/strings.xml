@@ -3,4 +3,6 @@
     <string name="turn_logging_on">Turn logging on</string>
     <string name="turn_logging_off">Turn logging off</string>
     <string name="distance_today">Distance moved today: </string>
+    <string name="daily_average_last_week">Daily average during the last 7 days: </string>
+    <string name="vertical_distance_today">Vertical distance moved today: </string>
 </resources>

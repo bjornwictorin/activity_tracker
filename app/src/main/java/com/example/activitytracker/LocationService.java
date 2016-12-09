@@ -64,16 +64,36 @@ public class LocationService extends Service {
             Log.d("G53MDP", "test method in LocationService called");
         }
         double distanceToday() {
-            return distanceTodayFunction();
+            return distancePerDay(0);
+        }
+        //Calculates the average distance per day for the last 7 days. If a day has a distance
+        //of 0, it will not be taken into account in the calculation of the average.
+        double dailyAverageLastWeek() {
+            double totalWeekDistance = 0;
+            int nonZeroDays = 0;
+            double dayDistance;
+            for (int i = 0; i < 7; i++) {
+                dayDistance = distancePerDay(i);
+                totalWeekDistance += dayDistance;
+                if (dayDistance > 0) {
+                    nonZeroDays++;
+                }
+            }
+            return totalWeekDistance / nonZeroDays;
+        }
+        double verticalDistanceToday() {
+            return verticalDistancePerDay(0);
         }
     }
 
-    private double distanceTodayFunction() {
+    private double distancePerDay(int daysAgo) {
         //Calculate the distance that the device has moved during the specified day.
+        //Which day the data should be retrieved for is decided by the daysAgo parameter.
         //Fetch all locations that were recorded today from the database.
         String[] projection = {LocationProviderContract._ID, LocationProviderContract.LONGITUDE,
                 LocationProviderContract.LATITUDE};
-        String selection = " date(" + LocationProviderContract.TIMESTAMP + ") = date(CURRENT_TIMESTAMP)";
+        String selection = " date(" + LocationProviderContract.TIMESTAMP +
+                ") = date(CURRENT_TIMESTAMP, \"-" + daysAgo + " day\")";
         Cursor cursor = getContentResolver().query(LocationProviderContract.LOCATION_URI,
                 projection, selection, null, null);
         //Print all today's longitudes to the screen.
@@ -85,19 +105,46 @@ public class LocationService extends Service {
         //At least two points are needed to calculate a distance, hence the comparison > 1.
         if (cursor.getCount() > 1) {
             cursor.moveToFirst();
-            startLocation.setLongitude(cursor.getFloat(1));
-            startLocation.setLatitude(cursor.getFloat(2));
+            startLocation.setLongitude(cursor.getDouble(1));
+            startLocation.setLatitude(cursor.getDouble(2));
             for (int i = 1; i < cursor.getCount(); i++) {
                 cursor.moveToNext();
-                endLocation.setLongitude(cursor.getFloat(1));
-                endLocation.setLatitude(cursor.getFloat(2));
+                endLocation.setLongitude(cursor.getDouble(1));
+                endLocation.setLatitude(cursor.getDouble(2));
                 double distance = startLocation.distanceTo(endLocation);
-                Log.d("G53MDP", "distance: " + distance);
                 distanceToday += distance;
                 startLocation = new Location(endLocation);
             }
         }
         cursor.close();
         return distanceToday;
+    }
+
+    private double verticalDistancePerDay(int daysAgo) {
+        //Calculates the vertical distance that the device has moved during the specified day.
+        //Which day the data should be retrieved for is decided by the daysAgo parameter.
+        //The vertical distance is based in the altitude measurements from the GPS.
+        String[] projection = {LocationProviderContract.ALTITUDE};
+        String selection = " date(" + LocationProviderContract.TIMESTAMP +
+                ") = date(CURRENT_TIMESTAMP, \"-" + daysAgo + " day\")";
+        Cursor cursor = getContentResolver().query(LocationProviderContract.LOCATION_URI, projection,
+                selection, null, null);
+        //Calculate the vertical distance for today.
+        double verticalDistance = 0;
+        //At least two points are needed to calculate a distance, hence the comparison > 1.
+        if (cursor.getCount() > 1) {
+            cursor.moveToFirst();
+            double startAltitude = cursor.getDouble(0);
+            double endAltitude;
+            for (int i = 1; i < cursor.getCount(); i++) {
+                cursor.moveToNext();
+                endAltitude = cursor.getDouble(0);
+                double tempDistance = endAltitude - startAltitude;
+                verticalDistance += tempDistance;
+                startAltitude = endAltitude;
+            }
+        }
+        cursor.close();
+        return verticalDistance;
     }
 }

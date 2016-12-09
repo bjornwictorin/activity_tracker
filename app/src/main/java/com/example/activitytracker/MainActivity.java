@@ -58,6 +58,25 @@ public class MainActivity extends AppCompatActivity {
         textView.setText(getString(R.string.distance_today) + " " + distanceFormatted + " km");
     }
 
+    public void updateDailyAverage() {
+        TextView textView = (TextView) findViewById(R.id.daily_average_last_week);
+        double averageInMetres = locationServiceBinder.dailyAverageLastWeek();
+        double averageInKilometres = averageInMetres / 1000;
+        //Only show two decimal places.
+        String distanceFormatted = String.format("%.2f", averageInKilometres);
+        textView.setText(getString(R.string.daily_average_last_week) +
+                " " + distanceFormatted + " km");
+    }
+
+    public void updateVerticalDistanceToday() {
+        TextView textView = (TextView) findViewById(R.id.vertical_distance_today);
+        double verticalDistanceInMetres = locationServiceBinder.verticalDistanceToday();
+        //Only show two decimal places.
+        String distanceFormatted = String.format("%.2f", verticalDistanceInMetres);
+        textView.setText(getString(R.string.vertical_distance_today) +
+                " " + distanceFormatted + " m");
+    }
+
     //The purpose of this class is to update the distance values showed in the activity only when
     // data has changed.
     private class MyObserver extends ContentObserver {
@@ -72,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
         public void onChange(boolean selfChange, Uri uri) {
             Log.d("G53MDP", "MyObserver onChange");
             updateDistanceToday();
+            updateDailyAverage();
+            updateVerticalDistanceToday();
         }
     }
 
@@ -80,9 +101,11 @@ public class MainActivity extends AppCompatActivity {
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.d("G53MDP", "onServiceConnected");
             locationServiceBinder = (LocationService.MyBinder) service;
-            //Update the value of the distance moved today as soon as the activity is connected to
+            //Update the displayed values of the distances as soon as the activity is connected to
             // the content provider.
             updateDistanceToday();
+            updateDailyAverage();
+            updateVerticalDistanceToday();
         }
 
         @Override

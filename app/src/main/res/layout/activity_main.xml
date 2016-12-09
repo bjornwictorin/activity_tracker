@@ -27,4 +27,18 @@
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
         android:layout_gravity="left"
         android:id="@+id/distance_today" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+        android:layout_gravity="left"
+        android:id="@+id/daily_average_last_week" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+        android:layout_gravity="left"
+        android:id="@+id/vertical_distance_today" />
 </LinearLayout>

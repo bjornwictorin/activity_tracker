@@ -15,6 +15,7 @@ import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -36,7 +37,11 @@ public class MainActivity extends AppCompatActivity {
         startLocationService();
         //Inform the user if the GPS is disabled when the activity is created.
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            //Hide warning message if GPS is enabled.
+            TextView textView = (TextView) findViewById(R.id.gps_disabled_warning);
+            textView.setVisibility(View.GONE);
+        } else {
             Toast toast = Toast.makeText(this, getString(R.string.gps_disabled_message), Toast.LENGTH_LONG);
             toast.show();
         }
@@ -125,6 +130,9 @@ public class MainActivity extends AppCompatActivity {
             Toast toast = Toast.makeText(context, getString(gps_disabled_message),
                     Toast.LENGTH_LONG);
             toast.show();
+            //Show warning message if GPS is enabled.
+            TextView textView = (TextView) findViewById(R.id.gps_disabled_warning);
+            textView.setVisibility(View.VISIBLE);
         }
     };
 
@@ -136,6 +144,9 @@ public class MainActivity extends AppCompatActivity {
             Toast toast = Toast.makeText(context, getString(R.string.gps_enabled_message),
                     Toast.LENGTH_LONG);
             toast.show();
+            //Hide warning message if GPS is enabled.
+            TextView textView = (TextView) findViewById(R.id.gps_disabled_warning);
+            textView.setVisibility(View.GONE);
         }
     };
 

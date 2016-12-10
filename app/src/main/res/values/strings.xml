@@ -5,4 +5,5 @@
     <string name="distance_today">Distance moved today: </string>
     <string name="daily_average_last_week">Daily average during the last 7 days: </string>
     <string name="vertical_distance_today">Vertical distance moved today: </string>
+    <string name="gps_disabled_message">The GPS is disabled. Please turn it on if you want to log your activity.</string>
 </resources>

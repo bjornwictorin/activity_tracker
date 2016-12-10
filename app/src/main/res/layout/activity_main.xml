@@ -12,13 +12,13 @@
     tools:context="com.example.activitytracker.MainActivity">
 
     <Switch
-        android:text="@string/turn_logging_off"
+        android:text="@string/turn_logging_on"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
         android:switchPadding="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:checked="true"
+        android:checked="false"
         android:id="@+id/log_switch" />
 
     <TextView

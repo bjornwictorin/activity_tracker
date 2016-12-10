@@ -152,7 +152,9 @@ public class LocationService extends Service {
             for (int i = 1; i < cursor.getCount(); i++) {
                 cursor.moveToNext();
                 endAltitude = cursor.getDouble(0);
-                double tempDistance = endAltitude - startAltitude;
+                //Add the absolute value of the distance to the total altitude. The absolute is used
+                //since otherwise it would subtract altitude when you walk downhill.
+                double tempDistance = Math.abs(endAltitude - startAltitude);
                 verticalDistance += tempDistance;
                 startAltitude = endAltitude;
             }

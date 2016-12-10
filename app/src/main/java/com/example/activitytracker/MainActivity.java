@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.database.ContentObserver;
+import android.graphics.Color;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,6 +21,12 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.ValueDependentColor;
+import com.jjoe64.graphview.Viewport;
+import com.jjoe64.graphview.series.BarGraphSeries;
+import com.jjoe64.graphview.series.DataPoint;
 
 import static com.example.activitytracker.R.string.gps_disabled_message;
 
@@ -119,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
             updateDistanceToday();
             updateDailyAverage();
             updateVerticalDistanceToday();
+            updateWeekGraph();
         }
     }
 
@@ -160,6 +168,7 @@ public class MainActivity extends AppCompatActivity {
             updateDistanceToday();
             updateDailyAverage();
             updateVerticalDistanceToday();
+            updateWeekGraph();
         }
 
         @Override
@@ -168,6 +177,45 @@ public class MainActivity extends AppCompatActivity {
             locationServiceBinder = null;
         }
     };
+
+    private void updateWeekGraph() {
+        //Here a third party library is used. It is called android-graphview and is available under
+        //an Apache 2 license. More info can be found at http://www.android-graphview.org/support/
+        GraphView graphView = (GraphView) findViewById(R.id.week_graph);
+        BarGraphSeries<DataPoint> series = new BarGraphSeries<>(new DataPoint[] {
+                new DataPoint(0, 2),
+                new DataPoint(1, 7),
+                new DataPoint(2, 2),
+                new DataPoint(3, 4),
+                new DataPoint(4, 2)
+        });
+        Viewport viewport = graphView.getViewport();
+        //Set the boundaries of the Y-axis.
+        viewport.setMinY(0);
+        viewport.setMaxY(15);
+        viewport.setYAxisBoundsManual(true);
+        //Set the distance between the bars.
+        series.setSpacing(50);
+        //Set a title.
+        graphView.setTitle(getString(R.string.graph_title));
+        //Change the colour of the bar depending on the height.
+        series.setValueDependentColor(new ValueDependentColor<DataPoint>() {
+            @Override
+            public int get(DataPoint data) {
+                if (data.getY() < 3) {
+                    //Red for short distance.
+                    return Color.rgb(255, 69, 0);
+                } else if (data.getY() < 6) {
+                    //Yellow for medium distance.
+                    return Color.rgb(255, 255, 51);
+                } else {
+                    //Green for long distance.
+                    return Color.rgb(0, 128, 0);
+                }
+            }
+        });
+        graphView.addSeries(series);
+    }
 
     private void startLocationService() {
         Log.d("G53MDP", "startLocationService");

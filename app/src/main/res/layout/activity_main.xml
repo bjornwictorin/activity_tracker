@@ -49,4 +49,10 @@
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
         android:layout_gravity="left"
         android:id="@+id/vertical_distance_today" />
+
+    <com.jjoe64.graphview.GraphView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:id="@+id/week_graph" />
 </LinearLayout>

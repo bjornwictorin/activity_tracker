@@ -26,4 +26,7 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:24.2.1'
     testCompile 'junit:junit:4.12'
+    //Third party library for graph drawing. Available under Apache 2 license.
+    //More info here: http://www.android-graphview.org/support/
+    compile 'com.jjoe64:graphview:4.2.1'
 }

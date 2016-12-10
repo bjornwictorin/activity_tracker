@@ -47,14 +47,19 @@ public class MyLocationListener implements LocationListener {
     @Override
     public void onProviderEnabled(String provider) {
         Log.d("G53MDP", "onProviderEnabled " + provider);
+        //Send local broadcast to notify the user that the GPS is enabled.
+        LocalBroadcastManager bcManager =
+                LocalBroadcastManager.getInstance(instancingService.getApplicationContext());
+        Intent intent = new Intent("gps_enabled_intent");
+        bcManager.sendBroadcast(intent);
     }
 
     public void onProviderDisabled(String provider) {
         Log.d("G53MDP", "onProviderDisabled " + provider);
-        //Send local broadcast to notify the user that the GPS is not enabled.
+        //Send local broadcast to notify the user that the GPS is disabled.
         LocalBroadcastManager bcManager =
                 LocalBroadcastManager.getInstance(instancingService.getApplicationContext());
-        Intent intent = new Intent("no_gps_intent");
+        Intent intent = new Intent("gps_disabled_intent");
         bcManager.sendBroadcast(intent);
     }
 }

@@ -32,13 +32,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //Start the location service if the GPS is enabled.
+        //Start the location service.
+        startLocationService();
+        //Inform the user if the GPS is disabled when the activity is created.
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        final Switch logSwitch = (Switch) findViewById(R.id.log_switch);
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            startLocationService();
-            logSwitch.setChecked(true);
-        } else {
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             Toast toast = Toast.makeText(this, getString(R.string.gps_disabled_message), Toast.LENGTH_LONG);
             toast.show();
         }
@@ -47,13 +45,16 @@ public class MainActivity extends AppCompatActivity {
         getContentResolver().registerContentObserver(LocationProviderContract.LOCATION_URI, true,
                 myObserver);
 
-        //Register a local broadcast receiver to listen to a local broadcast that will be sent when
-        //the GPS is disabled.
+        //Register two local broadcast receivers to listen to local broadcasts that will be sent
+        //when the GPS is disabled or enabled.
         LocalBroadcastManager.getInstance(this).registerReceiver(gpsDisabledBroadcastReceiver,
-                new IntentFilter("no_gps_intent"));
+                new IntentFilter("gps_disabled_intent"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(gpsEnabledBroadcastReceiver,
+                new IntentFilter("gps_enabled_intent"));
+
 
         //Set up the handling of clicks on the switch that turns logging on and off.
-
+        final Switch logSwitch = (Switch) findViewById(R.id.log_switch);
         logSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
@@ -122,6 +123,17 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             //Toast message that tells the user that the GPS is disabled and should be turned on.
             Toast toast = Toast.makeText(context, getString(gps_disabled_message),
+                    Toast.LENGTH_LONG);
+            toast.show();
+        }
+    };
+
+    //This class is a broadcast receiver that will be notified when the GPS is enabled.
+    private BroadcastReceiver gpsEnabledBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //Toast message that tells the user that the GPS is disabled and should be turned on.
+            Toast toast = Toast.makeText(context, getString(R.string.gps_enabled_message),
                     Toast.LENGTH_LONG);
             toast.show();
         }

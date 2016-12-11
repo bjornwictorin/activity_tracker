@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     //The handler is needed to let myObserver make changes to the UI.
     private Handler h = new Handler();
     private MyObserver myObserver = new MyObserver(h);
+    private DistanceCalculator calculator = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         //Start the location service.
         startLocationService();
+        //Create a DistanceCalculator object that can be used to calculate distances.
+        calculator = new DistanceCalculator(this);
         //Inform the user if the GPS is disabled when the activity is created.
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -90,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void updateDistanceToday() {
         TextView textView = (TextView) findViewById(R.id.distance_today);
-        double distanceTodayInMetres = locationServiceBinder.distanceToday();
+        double distanceTodayInMetres = calculator.distanceToday();
         double distanceTodayInKilometres = distanceTodayInMetres / 1000;
         //Only show two decimal places.
         String distanceFormatted = String.format(Locale.ENGLISH, "%.2f", distanceTodayInKilometres);
@@ -99,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void updateDailyAverage() {
         TextView textView = (TextView) findViewById(R.id.daily_average_last_week);
-        double averageInMetres = locationServiceBinder.dailyAverageLastWeek();
+        double averageInMetres = calculator.dailyAverageLastWeek();
         double averageInKilometres = averageInMetres / 1000;
         //Only show two decimal places.
         String distanceFormatted = String.format(Locale.ENGLISH, "%.2f", averageInKilometres);
@@ -109,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void updateVerticalDistanceToday() {
         TextView textView = (TextView) findViewById(R.id.vertical_distance_today);
-        double verticalDistanceInMetres = locationServiceBinder.verticalDistanceToday();
+        double verticalDistanceInMetres = calculator.verticalDistanceToday();
         //Only show two decimal places.
         String distanceFormatted = String.format(Locale.ENGLISH, "%.2f", verticalDistanceInMetres);
         textView.setText(getString(R.string.vertical_distance_today) +
@@ -190,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
         // http://www.android-graphview.org/support/
 
         //Array containing the distances from the last 7 days.
-        double[] lastWeekDistances = locationServiceBinder.distancePerDaySevenDays();
+        double[] lastWeekDistances = calculator.distancePerDaySevenDays();
 
         GraphView graphView = (GraphView) findViewById(R.id.week_graph);
         //A series containing the distances from the last 7 days.

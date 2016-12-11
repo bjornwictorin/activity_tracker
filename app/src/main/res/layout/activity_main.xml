@@ -43,6 +43,13 @@
         android:onClick="onMoreInfoClick"
         android:id="@+id/more_info_button"/>
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/map_button_text"
+        android:onClick="onMapClick"
+        android:id="@+id/map_button"/>
+
     <com.jjoe64.graphview.GraphView
         android:layout_width="match_parent"
         android:layout_height="0dp"

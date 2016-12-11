@@ -43,7 +43,7 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".GraphActivity"></activity>
+        <activity android:name=".InfoActivity"></activity>
     </application>
 
 </manifest>

@@ -9,4 +9,5 @@
     <string name="gps_enabled_message">The GPS is enabled.</string>
     <string name="graph_title">Distances last 7 days (in km)</string>
     <string name="view_graph">Show activity for the last 7 days</string>
+    <string name="more_info">Show more activity info</string>
 </resources>

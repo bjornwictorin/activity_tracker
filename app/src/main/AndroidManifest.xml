@@ -32,18 +32,18 @@
             android:name=".LocationContentProvider"
             android:authorities="com.example.activitytracker.LocationContentProvider"
             android:exported="true"
-            android:multiprocess="true">
-        </provider>
+            android:multiprocess="true"></provider>
 
         <receiver
             android:name=".MyReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED">
-                </action>
+                <action android:name="android.intent.action.BOOT_COMPLETED"></action>
             </intent-filter>
         </receiver>
+
+        <activity android:name=".GraphActivity"></activity>
     </application>
 
 </manifest>

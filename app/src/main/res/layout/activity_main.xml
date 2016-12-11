@@ -50,9 +50,10 @@
         android:layout_gravity="left"
         android:id="@+id/vertical_distance_today" />
 
-    <com.jjoe64.graphview.GraphView
+    <Button
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:id="@+id/week_graph" />
+        android:layout_height="wrap_content"
+        android:text="@string/view_graph"
+        android:onClick="onViewGraphClick"
+        android:id="@+id/view_graph_button"/>
 </LinearLayout>

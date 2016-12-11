@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.database.ContentObserver;
-import android.graphics.Color;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -22,16 +21,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.jjoe64.graphview.DefaultLabelFormatter;
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.ValueDependentColor;
-import com.jjoe64.graphview.Viewport;
-import com.jjoe64.graphview.series.BarGraphSeries;
-import com.jjoe64.graphview.series.DataPoint;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
 import static com.example.activitytracker.R.string.gps_disabled_message;
@@ -135,7 +124,6 @@ public class MainActivity extends AppCompatActivity {
             updateDistanceToday();
             updateDailyAverage();
             updateVerticalDistanceToday();
-            updateWeekGraph();
         }
     }
 
@@ -177,7 +165,6 @@ public class MainActivity extends AppCompatActivity {
             updateDistanceToday();
             updateDailyAverage();
             updateVerticalDistanceToday();
-            updateWeekGraph();
         }
 
         @Override
@@ -186,94 +173,6 @@ public class MainActivity extends AppCompatActivity {
             locationServiceBinder = null;
         }
     };
-
-    private void updateWeekGraph() {
-        //Here a third party library is used for graph plotting. It is called android-graphview,
-        // and is available under an Apache 2 license. More info can be found at
-        // http://www.android-graphview.org/support/
-
-        //Array containing the distances from the last 7 days.
-        double[] lastWeekDistances = calculator.distancePerDaySevenDays();
-
-        GraphView graphView = (GraphView) findViewById(R.id.week_graph);
-        //A series containing the distances from the last 7 days.
-        BarGraphSeries<DataPoint> series = new BarGraphSeries<>();
-        for (int i = 0; i < 7; i++) {
-            series.appendData(new DataPoint(i, lastWeekDistances[i]), true, 7);
-        }
-
-        //Array to hold the dates of the last 7 days.
-        final Date dateArray[] = new Date[7];
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, -7);
-        for (int i = 0; i < 7; i++) {
-            calendar.add(Calendar.DATE, 1);
-            dateArray[i] = calendar.getTime();
-        }
-
-        //Set the X-label values to be the first letter of each weekday. Based on the example code at
-        //http://www.android-graphview.org/labels-and-label-formatter/
-        graphView.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
-            @Override
-            public String formatLabel(double value, boolean isValueX) {
-                if (isValueX) {
-                    int pos = (int) value;
-                    //Returns the first letter of the weekday that corresponds to the date in
-                    // dateArray at the index pos.
-                    return (new SimpleDateFormat("EE", Locale.ENGLISH).format(dateArray[pos]).substring(0, 1));
-                } else {
-                    return super.formatLabel(value, false);
-                }
-            }
-        });
-        Viewport viewport = graphView.getViewport();
-        //Set the boundaries of the X-axis.
-        viewport.setMinX(0);
-        viewport.setMaxX(6);
-        viewport.setXAxisBoundsManual(true);
-        graphView.getGridLabelRenderer().setNumHorizontalLabels(7);
-        //Set the boundaries of the Y-axis.
-        viewport.setMinY(0);
-        double maxDistance = maxDistance(lastWeekDistances);
-        viewport.setMaxY(maxDistance + 2);
-        viewport.setYAxisBoundsManual(true);
-        //Set the distance between the bars.
-        series.setSpacing(50);
-        //Set a title.
-        graphView.setTitle(getString(R.string.graph_title));
-        //Change the colour of the bars depending on the height.
-        //Based on the example code at http://www.android-graphview.org/bar-chart/
-        series.setValueDependentColor(new ValueDependentColor<DataPoint>() {
-            @Override
-            public int get(DataPoint data) {
-                if (data.getY() < 3) {
-                    //Red for short distance.
-                    return Color.rgb(255, 69, 0);
-                } else if (data.getY() < 6) {
-                    //Yellow for medium distance.
-                    return Color.rgb(255, 255, 51);
-                } else {
-                    //Green for long distance.
-                    return Color.rgb(50, 205, 50);
-                }
-            }
-        });
-
-        //Remove the old data to make room for the updated data.
-        graphView.removeAllSeries();
-        //Add the updated data to the graph.
-        graphView.addSeries(series);
-    }
-
-    private double maxDistance(double[] distances) {
-        double max = Double.MIN_VALUE;
-        for (double distance : distances) {
-            if (distance > max) {
-                max = distance;
-            }
-        }
-        return max;
-    }
 
     private void startLocationService() {
         Log.d("G53MDP", "startLocationService");
@@ -296,6 +195,11 @@ public class MainActivity extends AppCompatActivity {
         //Stop the service.
         Intent intent = new Intent(MainActivity.this, LocationService.class);
         stopService(intent);
+    }
+
+    public void onViewGraphClick(View v) {
+        Intent intent = new Intent(this, GraphActivity.class);
+        startActivity(intent);
     }
 
     @Override

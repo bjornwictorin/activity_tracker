@@ -22,11 +22,17 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.ValueDependentColor;
 import com.jjoe64.graphview.Viewport;
 import com.jjoe64.graphview.series.BarGraphSeries;
 import com.jjoe64.graphview.series.DataPoint;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import static com.example.activitytracker.R.string.gps_disabled_message;
 
@@ -87,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         double distanceTodayInMetres = locationServiceBinder.distanceToday();
         double distanceTodayInKilometres = distanceTodayInMetres / 1000;
         //Only show two decimal places.
-        String distanceFormatted = String.format("%.2f", distanceTodayInKilometres);
+        String distanceFormatted = String.format(Locale.ENGLISH, "%.2f", distanceTodayInKilometres);
         textView.setText(getString(R.string.distance_today) + " " + distanceFormatted + " km");
     }
 
@@ -96,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
         double averageInMetres = locationServiceBinder.dailyAverageLastWeek();
         double averageInKilometres = averageInMetres / 1000;
         //Only show two decimal places.
-        String distanceFormatted = String.format("%.2f", averageInKilometres);
+        String distanceFormatted = String.format(Locale.ENGLISH, "%.2f", averageInKilometres);
         textView.setText(getString(R.string.daily_average_last_week) +
                 " " + distanceFormatted + " km");
     }
@@ -105,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
         TextView textView = (TextView) findViewById(R.id.vertical_distance_today);
         double verticalDistanceInMetres = locationServiceBinder.verticalDistanceToday();
         //Only show two decimal places.
-        String distanceFormatted = String.format("%.2f", verticalDistanceInMetres);
+        String distanceFormatted = String.format(Locale.ENGLISH, "%.2f", verticalDistanceInMetres);
         textView.setText(getString(R.string.vertical_distance_today) +
                 " " + distanceFormatted + " m");
     }
@@ -181,24 +187,58 @@ public class MainActivity extends AppCompatActivity {
     private void updateWeekGraph() {
         //Here a third party library is used. It is called android-graphview and is available under
         //an Apache 2 license. More info can be found at http://www.android-graphview.org/support/
+
+        //Array containing the distances from the last 7 days.
+        double[] lastWeekDistances = locationServiceBinder.distancePerDaySevenDays();
+
         GraphView graphView = (GraphView) findViewById(R.id.week_graph);
-        BarGraphSeries<DataPoint> series = new BarGraphSeries<>(new DataPoint[] {
-                new DataPoint(0, 2),
-                new DataPoint(1, 7),
-                new DataPoint(2, 2),
-                new DataPoint(3, 4),
-                new DataPoint(4, 2)
+        //A series containing the distances from the last 7 days.
+        BarGraphSeries<DataPoint> series = new BarGraphSeries<>();
+        for (int i = 0; i < 7; i++) {
+            series.appendData(new DataPoint(i, lastWeekDistances[i]), true, 7);
+        }
+
+        //Array to hold the dates of the last 7 days.
+        final Date dateArray[] = new Date[7];
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE, -7);
+        for (int i = 0; i < 7; i++) {
+            calendar.add(Calendar.DATE, 1);
+            dateArray[i] = calendar.getTime();
+        }
+
+        //Set the X-label values to be the first letter of each weekday. Based on the example code at
+        //http://www.android-graphview.org/labels-and-label-formatter/
+        graphView.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
+            @Override
+            public String formatLabel(double value, boolean isValueX) {
+                if (isValueX) {
+                    int pos = (int) value;
+                    //Returns the first letter of the weekday that corresponds to the date in
+                    // dateArray at the index pos.
+                    return (new SimpleDateFormat("EE", Locale.ENGLISH).format(dateArray[pos]).substring(0, 1));
+                } else {
+                    return super.formatLabel(value, false);
+                }
+            }
         });
         Viewport viewport = graphView.getViewport();
+        //Set the boundaries of the X-axis.
+        viewport.setMinX(0);
+        viewport.setMaxX(6);
+        viewport.setXAxisBoundsManual(true);
+        graphView.getGridLabelRenderer().setNumHorizontalLabels(7);
         //Set the boundaries of the Y-axis.
         viewport.setMinY(0);
-        viewport.setMaxY(15);
+        double maxDistance = maxDistance(lastWeekDistances);
+        viewport.setMaxY(maxDistance + 2);
         viewport.setYAxisBoundsManual(true);
         //Set the distance between the bars.
         series.setSpacing(50);
         //Set a title.
         graphView.setTitle(getString(R.string.graph_title));
-        //Change the colour of the bar depending on the height.
+        //Change the colour of the bars depending on the height.
+        //Based on the example code at http://www.android-graphview.org/bar-chart/
         series.setValueDependentColor(new ValueDependentColor<DataPoint>() {
             @Override
             public int get(DataPoint data) {
@@ -210,11 +250,25 @@ public class MainActivity extends AppCompatActivity {
                     return Color.rgb(255, 255, 51);
                 } else {
                     //Green for long distance.
-                    return Color.rgb(0, 128, 0);
+                    return Color.rgb(50, 205, 50);
                 }
             }
         });
+
+        //Remove the old data to make room for the updated data.
+        graphView.removeAllSeries();
+        //Add the updated data to the graph.
         graphView.addSeries(series);
+    }
+
+    private double maxDistance(double[] distances) {
+        double max = Double.MIN_VALUE;
+        for (double distance : distances) {
+            if (distance > max) {
+                max = distance;
+            }
+        }
+        return max;
     }
 
     private void startLocationService() {

@@ -7,5 +7,5 @@
     <string name="vertical_distance_today">Vertical distance moved today: </string>
     <string name="gps_disabled_message">The GPS is disabled. Please turn it on if you want to log your activity.</string>
     <string name="gps_enabled_message">The GPS is enabled.</string>
-    <string name="graph_title">Distances last 7 days</string>
+    <string name="graph_title">Distances last 7 days (in km)</string>
 </resources>

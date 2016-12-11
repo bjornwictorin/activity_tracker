@@ -64,15 +64,12 @@ public class LocationService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
-        Log.d("G53MDP", "onBind");
+        Log.d("G53MDP", "LocationService onBind");
         return binder;
     }
 
     public class MyBinder extends Binder {
         //Place the methods that should be callable from activities here.
-        void test() {
-            Log.d("G53MDP", "test method in LocationService called");
-        }
         double distanceToday() {
             return distancePerDay(0);
         }
@@ -97,6 +94,15 @@ public class LocationService extends Service {
         double verticalDistanceToday() {
             return verticalDistancePerDay(0);
         }
+        double[] distancePerDaySevenDays() {
+            //Fill an array with the distances for the last 7 days. Distances in km.
+            double[] lastWeekDistances = new double[7];
+            for (int i = 0; i < 7; i++) {
+                //Have to be in reverse order in order to plot the latest day last in the graph.
+                lastWeekDistances[i] = distancePerDay(6 - i) / 1000;
+            }
+            return lastWeekDistances;
+        }
     }
 
     private double distancePerDay(int daysAgo) {
@@ -109,8 +115,6 @@ public class LocationService extends Service {
                 ") = date(CURRENT_TIMESTAMP, \"-" + daysAgo + " day\")";
         Cursor cursor = getContentResolver().query(LocationProviderContract.LOCATION_URI,
                 projection, selection, null, null);
-        //Print all today's longitudes to the screen.
-        Log.d("G53MDP", "Cursor count: " + cursor.getCount());
         //Calculate the distance for today.
         double distanceToday = 0;
         Location startLocation = new Location("");

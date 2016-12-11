@@ -4,6 +4,10 @@ import android.app.Activity;
 import android.database.Cursor;
 import android.location.Location;
 
+import com.google.android.gms.maps.model.LatLng;
+
+import java.util.ArrayList;
+
 /**
  * Created by Björn on 2016-12-11.
  */
@@ -44,6 +48,7 @@ public class DistanceCalculator {
     public double verticalDistanceToday() {
         return verticalDistancePerDay(0);
     }
+
     public double[] distancePerDaySevenDays() {
         //Fill an array with the distances for the last 7 days. Distances in km.
         double[] lastWeekDistances = new double[7];
@@ -52,6 +57,48 @@ public class DistanceCalculator {
             lastWeekDistances[i] = distancePerDay(6 - i) / 1000;
         }
         return lastWeekDistances;
+    }
+
+    //Returns a list containing all latitudes and longitudes logged daysAgo days ago.
+    public ArrayList<LatLng> getCoordinatesPerDay(int daysAgo) {
+        String[] projection = {LocationProviderContract.LATITUDE, LocationProviderContract.LONGITUDE};
+        String selection = " date(" + LocationProviderContract.TIMESTAMP + ") = date(CURRENT_TIMESTAMP, \"-" +
+            daysAgo + " day\")";
+        Cursor cursor = instantiatingActivity.getContentResolver().
+                query(LocationProviderContract.LOCATION_URI, projection, selection, null, null);
+        int nbrOfLocations = cursor.getCount();
+        ArrayList<LatLng> coordinatesToday = new ArrayList<>();
+        if (nbrOfLocations > 0) {
+            cursor.moveToFirst();
+            coordinatesToday.add(new LatLng(cursor.getDouble(0), cursor.getDouble(1)));
+            for (int i = 1; i < cursor.getCount(); i++) {
+                cursor.moveToNext();
+                coordinatesToday.add(new LatLng(cursor.getDouble(0), cursor.getDouble(1)));
+            }
+        }
+        cursor.close();
+        return coordinatesToday;
+    }
+
+    //Returns a list containing all timestamps logged daysAgo days ago.
+    public ArrayList<String> getTimestampsPerDay(int daysAgo) {
+        String[] projection = {LocationProviderContract.TIMESTAMP};
+        String selection = " date(" + LocationProviderContract.TIMESTAMP + ") = date(CURRENT_TIMESTAMP, \"-" +
+                daysAgo + " day\")";
+        Cursor cursor = instantiatingActivity.getContentResolver().
+                query(LocationProviderContract.LOCATION_URI, projection, selection, null, null);
+        int nbrOfLocations = cursor.getCount();
+        ArrayList<String> timestampsToday = new ArrayList<>();
+        if (nbrOfLocations > 0) {
+            cursor.moveToFirst();
+            timestampsToday.add(cursor.getString(0));
+            for (int i = 1; i < cursor.getCount(); i++) {
+                cursor.moveToNext();
+                timestampsToday.add(cursor.getString(0));
+            }
+        }
+        cursor.close();
+        return timestampsToday;
     }
 
     private double distancePerDay(int daysAgo) {

@@ -10,6 +10,6 @@
     <string name="graph_title">Distances last 7 days (in km)</string>
     <string name="view_graph">Show activity for the last 7 days</string>
     <string name="more_info">Show more activity info</string>
-    <string name="map_button_text">View today\'s movement on map</string>
+    <string name="map_button_text">View today\'s movement on a map</string>
     <string name="title_activity_maps">Map</string>
 </resources>

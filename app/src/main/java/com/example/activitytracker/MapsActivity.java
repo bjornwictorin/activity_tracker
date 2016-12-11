@@ -49,13 +49,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //Retrieve all today's coordinates and timestamps.
         ArrayList<LatLng> coordinatesToday = calculator.getCoordinatesPerDay(0);
         ArrayList<String> timeatampsToday = calculator.getTimestampsPerDay(0);
-        //Mark out every tenth point on the map. Only every tenth is marked to avoid cluttering.
-        //Every marker gets its timstamp as its title.
-        for (int i = 0; i < coordinatesToday.size(); i += 10) {
-            mMap.addMarker(new MarkerOptions().position(coordinatesToday.get(i)).title(timeatampsToday.get(i)));
+        if (coordinatesToday.size() > 0) {
+            //Mark out every tenth point on the map. Only every tenth is marked to avoid cluttering.
+            //Every marker gets its timstamp as its title.
+            for (int i = 0; i < coordinatesToday.size(); i += 10) {
+                mMap.addMarker(new MarkerOptions().position(coordinatesToday.get(i)).title(timeatampsToday.get(i)));
+            }
+            //Move the camera to the last element.
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinatesToday.get(coordinatesToday.size() - 1), 14));
+            //Show the zoom button to allow zooming on the emulator which does not have multi-touch.
+            mMap.getUiSettings().setZoomControlsEnabled(true);
         }
-        //Move the camera to the last element.
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinatesToday.get(coordinatesToday.size()-1), 14));
         /*
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(-34, 151);

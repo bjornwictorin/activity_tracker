@@ -185,8 +185,9 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private void updateWeekGraph() {
-        //Here a third party library is used. It is called android-graphview and is available under
-        //an Apache 2 license. More info can be found at http://www.android-graphview.org/support/
+        //Here a third party library is used for graph plotting. It is called android-graphview,
+        // and is available under an Apache 2 license. More info can be found at
+        // http://www.android-graphview.org/support/
 
         //Array containing the distances from the last 7 days.
         double[] lastWeekDistances = locationServiceBinder.distancePerDaySevenDays();

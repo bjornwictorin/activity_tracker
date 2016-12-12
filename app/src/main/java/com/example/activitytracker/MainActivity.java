@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onResume() {
+        super.onResume();
         //Register all content observers and broadcast receivers here in onResume.
         //They are unregistered in onPause.
         //Register the ContentObserver to listen to changes in the database.

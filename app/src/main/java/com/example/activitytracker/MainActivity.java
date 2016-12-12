@@ -292,6 +292,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onPause() {
+        super.onPause();
         //Unregister all content observers and broadcast receivers to avoid memory leaks.
         getContentResolver().unregisterContentObserver(myObserver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(gpsDisabledBroadcastReceiver);

@@ -77,6 +77,8 @@ class DistanceCalculator {
                 cursor.moveToNext();
                 coordinatesToday.add(new LatLng(cursor.getDouble(0), cursor.getDouble(1)));
             }
+        }
+        if (cursor != null) {
             cursor.close();
         }
         return coordinatesToday;
@@ -100,6 +102,8 @@ class DistanceCalculator {
                 cursor.moveToNext();
                 timestampsToday.add(cursor.getString(0));
             }
+        }
+        if (cursor != null) {
             cursor.close();
         }
         return timestampsToday;
@@ -132,6 +136,8 @@ class DistanceCalculator {
                 distanceToday += distance;
                 startLocation = new Location(endLocation);
             }
+        }
+        if (cursor != null) {
             cursor.close();
         }
         return distanceToday;
@@ -162,6 +168,8 @@ class DistanceCalculator {
                 verticalDistance += tempDistance;
                 startAltitude = endAltitude;
             }
+        }
+        if (cursor != null) {
             cursor.close();
         }
         return verticalDistance;

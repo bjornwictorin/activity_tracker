@@ -65,7 +65,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void onNothingSelected(AdapterView<?> parent) {
-
     }
 
 
@@ -99,12 +98,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.clear();
         //Retrieve all today's coordinates and timestamps.
         ArrayList<LatLng> coordinatesToday = calculator.getCoordinatesPerDay(daysAgo);
-        ArrayList<String> timeatampsToday = calculator.getTimestampsPerDay(daysAgo);
+        ArrayList<String> timestampsToday = calculator.getTimestampsPerDay(daysAgo);
         if (coordinatesToday.size() > 0) {
             //Mark out every tenth point on the map. Only every tenth is marked to avoid cluttering.
             //Every marker gets its timstamp as its title.
             for (int i = 0; i < coordinatesToday.size(); i += 10) {
-                mMap.addMarker(new MarkerOptions().position(coordinatesToday.get(i)).title(timeatampsToday.get(i)));
+                mMap.addMarker(new MarkerOptions().position(coordinatesToday.get(i)).title(timestampsToday.get(i)));
             }
             //Move the camera to the last element.
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinatesToday.get(coordinatesToday.size() - 1), 14));

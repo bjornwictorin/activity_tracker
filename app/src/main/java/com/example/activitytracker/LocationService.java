@@ -35,16 +35,6 @@ public class LocationService extends Service {
         }
     }
 
-    /*
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        //Return START_NOT_STICKY to prevent the service from restarting when the application
-        //is killed. This is important since it is desired that the service starts when the user
-        //starts the app.
-        return START_NOT_STICKY;
-    }
-    */
-
     @Override
     public void onDestroy() {
         Log.d("G53MDP", "LocationService onDestroy");

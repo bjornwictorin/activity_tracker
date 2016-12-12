@@ -26,7 +26,7 @@
         <service
             android:name=".LocationService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="false" />
 
         <provider
             android:name=".LocationContentProvider"
@@ -37,7 +37,7 @@
         <receiver
             android:name=".MyReceiver"
             android:enabled="true"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>

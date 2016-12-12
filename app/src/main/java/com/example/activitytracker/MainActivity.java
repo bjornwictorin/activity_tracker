@@ -62,18 +62,6 @@ public class MainActivity extends AppCompatActivity {
             toast.show();
         }
 
-        //Register the ContentObserver to listen to changes in the database.
-        getContentResolver().registerContentObserver(LocationProviderContract.LOCATION_URI, true,
-                myObserver);
-
-        //Register two local broadcast receivers to listen to local broadcasts that will be sent
-        //when the GPS is disabled or enabled.
-        LocalBroadcastManager.getInstance(this).registerReceiver(gpsDisabledBroadcastReceiver,
-                new IntentFilter("gps_disabled_intent"));
-        LocalBroadcastManager.getInstance(this).registerReceiver(gpsEnabledBroadcastReceiver,
-                new IntentFilter("gps_enabled_intent"));
-
-
         //Set up the handling of clicks on the switch that turns logging on and off.
         final Switch logSwitch = (Switch) findViewById(R.id.log_switch);
         logSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
@@ -89,6 +77,22 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        //Register all content observers and broadcast receivers here in onResume.
+        //They are unregistered in onPause.
+        //Register the ContentObserver to listen to changes in the database.
+        getContentResolver().registerContentObserver(LocationProviderContract.LOCATION_URI, true,
+                myObserver);
+
+        //Register two local broadcast receivers to listen to local broadcasts that will be sent
+        //when the GPS is disabled or enabled.
+        LocalBroadcastManager.getInstance(this).registerReceiver(gpsDisabledBroadcastReceiver,
+                new IntentFilter("gps_disabled_intent"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(gpsEnabledBroadcastReceiver,
+                new IntentFilter("gps_enabled_intent"));
     }
 
     public void updateDistanceToday() {
@@ -193,14 +197,14 @@ public class MainActivity extends AppCompatActivity {
         graphView.getGridLabelRenderer().setLabelFormatter(new DefaultLabelFormatter() {
             @Override
             public String formatLabel(double value, boolean isValueX) {
-                if (isValueX) {
-                    int pos = (int) value;
-                    //Returns the first letter of the weekday that corresponds to the date in
-                    // dateArray at the index pos.
-                    return (new SimpleDateFormat("EE", Locale.ENGLISH).format(dateArray[pos]).substring(0, 1));
-                } else {
-                    return super.formatLabel(value, false);
-                }
+            if (isValueX) {
+                int pos = (int) value;
+                //Returns the first letter of the weekday that corresponds to the date in
+                // dateArray at the index pos.
+                return (new SimpleDateFormat("EE", Locale.ENGLISH).format(dateArray[pos]).substring(0, 1));
+            } else {
+                return super.formatLabel(value, false);
+            }
             }
         });
         Viewport viewport = graphView.getViewport();
@@ -283,6 +287,14 @@ public class MainActivity extends AppCompatActivity {
     public void onMapClick(View v) {
         Intent intent = new Intent(this, MapsActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void onPause() {
+        //Unregister all content observers and broadcast receivers to avoid memory leaks.
+        getContentResolver().unregisterContentObserver(myObserver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(gpsDisabledBroadcastReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(gpsEnabledBroadcastReceiver);
     }
 
     @Override

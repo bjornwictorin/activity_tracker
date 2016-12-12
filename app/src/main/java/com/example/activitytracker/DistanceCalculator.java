@@ -14,21 +14,21 @@ import java.util.ArrayList;
 
 //This class carries out distance calculations, and gets its information by querying the
 //content provider.
-public class DistanceCalculator {
+class DistanceCalculator {
     //This activity is used to access the content provider.
     private Activity instantiatingActivity = null;
 
-    public DistanceCalculator(Activity activity) {
+    DistanceCalculator(Activity activity) {
         instantiatingActivity = activity;
     }
 
-    public double distanceToday() {
+    double distanceToday() {
         return distancePerDay(0);
     }
 
     //Calculates the average distance per day for the last 7 days. If a day has a distance
     // of 0, it will not be taken into account in the calculation of the average.
-    public double dailyAverageLastWeek() {
+    double dailyAverageLastWeek() {
         double totalWeekDistance = 0;
         int nonZeroDays = 0;
         double dayDistance;
@@ -45,11 +45,11 @@ public class DistanceCalculator {
         return totalWeekDistance / nonZeroDays;
     }
 
-    public double verticalDistanceToday() {
+    double verticalDistanceToday() {
         return verticalDistancePerDay(0);
     }
 
-    public double[] distancePerDaySevenDays() {
+    double[] distancePerDaySevenDays() {
         //Fill an array with the distances for the last 7 days. Distances in km.
         double[] lastWeekDistances = new double[7];
         for (int i = 0; i < 7; i++) {
@@ -60,44 +60,48 @@ public class DistanceCalculator {
     }
 
     //Returns a list containing all latitudes and longitudes logged daysAgo days ago.
-    public ArrayList<LatLng> getCoordinatesPerDay(int daysAgo) {
+    ArrayList<LatLng> getCoordinatesPerDay(int daysAgo) {
+        //The list to return.
+        ArrayList<LatLng> coordinatesToday = new ArrayList<>();
+        //Query the content provider.
         String[] projection = {LocationProviderContract.LATITUDE, LocationProviderContract.LONGITUDE};
         String selection = " date(" + LocationProviderContract.TIMESTAMP + ") = date(CURRENT_TIMESTAMP, \"-" +
             daysAgo + " day\")";
         Cursor cursor = instantiatingActivity.getContentResolver().
                 query(LocationProviderContract.LOCATION_URI, projection, selection, null, null);
-        int nbrOfLocations = cursor.getCount();
-        ArrayList<LatLng> coordinatesToday = new ArrayList<>();
-        if (nbrOfLocations > 0) {
+        //Add the latitudes and longitudes to the list.
+        if (cursor != null && cursor.getCount() > 0) {
             cursor.moveToFirst();
             coordinatesToday.add(new LatLng(cursor.getDouble(0), cursor.getDouble(1)));
             for (int i = 1; i < cursor.getCount(); i++) {
                 cursor.moveToNext();
                 coordinatesToday.add(new LatLng(cursor.getDouble(0), cursor.getDouble(1)));
             }
+            cursor.close();
         }
-        cursor.close();
         return coordinatesToday;
     }
 
     //Returns a list containing all timestamps logged daysAgo days ago.
-    public ArrayList<String> getTimestampsPerDay(int daysAgo) {
+    ArrayList<String> getTimestampsPerDay(int daysAgo) {
+        //The list to return.
+        ArrayList<String> timestampsToday = new ArrayList<>();
+        //Query the content provider.
         String[] projection = {LocationProviderContract.TIMESTAMP};
         String selection = " date(" + LocationProviderContract.TIMESTAMP + ") = date(CURRENT_TIMESTAMP, \"-" +
                 daysAgo + " day\")";
         Cursor cursor = instantiatingActivity.getContentResolver().
                 query(LocationProviderContract.LOCATION_URI, projection, selection, null, null);
-        int nbrOfLocations = cursor.getCount();
-        ArrayList<String> timestampsToday = new ArrayList<>();
-        if (nbrOfLocations > 0) {
+        //Add the timestamps to the list.
+        if (cursor != null && cursor.getCount() > 0) {
             cursor.moveToFirst();
             timestampsToday.add(cursor.getString(0));
             for (int i = 1; i < cursor.getCount(); i++) {
                 cursor.moveToNext();
                 timestampsToday.add(cursor.getString(0));
             }
+            cursor.close();
         }
-        cursor.close();
         return timestampsToday;
     }
 
@@ -116,7 +120,7 @@ public class DistanceCalculator {
         Location startLocation = new Location("");
         Location endLocation = new Location("");
         //At least two points are needed to calculate a distance, hence the comparison > 1.
-        if (cursor.getCount() > 1) {
+        if (cursor != null && cursor.getCount() > 1) {
             cursor.moveToFirst();
             startLocation.setLongitude(cursor.getDouble(1));
             startLocation.setLatitude(cursor.getDouble(2));
@@ -128,8 +132,8 @@ public class DistanceCalculator {
                 distanceToday += distance;
                 startLocation = new Location(endLocation);
             }
+            cursor.close();
         }
-        cursor.close();
         return distanceToday;
     }
 
@@ -145,7 +149,7 @@ public class DistanceCalculator {
         //Calculate the vertical distance for today.
         double verticalDistance = 0;
         //At least two points are needed to calculate a distance, hence the comparison > 1.
-        if (cursor.getCount() > 1) {
+        if (cursor != null && cursor.getCount() > 1) {
             cursor.moveToFirst();
             double startAltitude = cursor.getDouble(0);
             double endAltitude;
@@ -158,8 +162,8 @@ public class DistanceCalculator {
                 verticalDistance += tempDistance;
                 startAltitude = endAltitude;
             }
+            cursor.close();
         }
-        cursor.close();
         return verticalDistance;
     }
 }

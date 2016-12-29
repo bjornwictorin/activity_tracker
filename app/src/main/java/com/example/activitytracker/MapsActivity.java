@@ -101,7 +101,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         ArrayList<String> timestampsToday = calculator.getTimestampsPerDay(daysAgo);
         if (coordinatesToday.size() > 0) {
             //Mark out every tenth point on the map. Only every tenth is marked to avoid cluttering.
-            //Every marker gets its timstamp as its title.
+            //Every marker gets its timestamp as its title.
             for (int i = 0; i < coordinatesToday.size(); i += 10) {
                 mMap.addMarker(new MarkerOptions().position(coordinatesToday.get(i)).title(timestampsToday.get(i)));
             }

@@ -24,10 +24,21 @@ public class InfoActivity extends AppCompatActivity {
         calculator = new DistanceCalculator(this);
         updateDailyAverage();
         updateVerticalDistanceToday();
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
         //Register the ContentObserver to listen to changes in the database.
         getContentResolver().registerContentObserver(LocationProviderContract.LOCATION_URI, true,
                 myObserver);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        //Unregister the ContentObserver to avoid memory leak.
+        getContentResolver().unregisterContentObserver(myObserver);
     }
 
     public void updateDailyAverage() {

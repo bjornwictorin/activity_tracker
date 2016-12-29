@@ -51,16 +51,6 @@ public class MainActivity extends AppCompatActivity {
         startLocationService();
         //Create a DistanceCalculator object that can be used to calculate distances.
         calculator = new DistanceCalculator(this);
-        //Inform the user if the GPS is disabled when the activity is created.
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            //Hide warning message if GPS is enabled.
-            TextView textView = (TextView) findViewById(R.id.gps_disabled_warning);
-            textView.setVisibility(View.GONE);
-        } else {
-            Toast toast = Toast.makeText(this, getString(R.string.gps_disabled_message), Toast.LENGTH_LONG);
-            toast.show();
-        }
 
         //Set up the handling of clicks on the switch that turns logging on and off.
         final Switch logSwitch = (Switch) findViewById(R.id.log_switch);
@@ -82,6 +72,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+        //Force an update of the graph and the displayed distance today whenever the activity is
+        //resumed.
+        updateDistanceToday();
+        updateWeekGraph();
         //Register all content observers and broadcast receivers here in onResume.
         //They are unregistered in onPause.
         //Register the ContentObserver to listen to changes in the database.
@@ -94,6 +88,21 @@ public class MainActivity extends AppCompatActivity {
                 new IntentFilter("gps_disabled_intent"));
         LocalBroadcastManager.getInstance(this).registerReceiver(gpsEnabledBroadcastReceiver,
                 new IntentFilter("gps_enabled_intent"));
+
+        //Check whether the gps is enabled and show or hide the warning message accordingly.
+        //Inform the user if the GPS is disabled when the activity is created.
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            //Hide warning message if GPS is enabled.
+            TextView textView = (TextView) findViewById(R.id.gps_disabled_warning);
+            textView.setVisibility(View.GONE);
+        } else {
+            Log.d("G53MDP", "gps disabled in onResume");
+            Toast toast = Toast.makeText(this, getString(R.string.gps_disabled_message), Toast.LENGTH_LONG);
+            toast.show();
+            TextView textView = (TextView) findViewById(R.id.gps_disabled_warning);
+            textView.setVisibility(View.VISIBLE);
+        }
     }
 
     public void updateDistanceToday() {
@@ -131,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
             Toast toast = Toast.makeText(context, getString(gps_disabled_message),
                     Toast.LENGTH_LONG);
             toast.show();
-            //Show warning message if GPS is enabled.
+            //Show warning message if GPS is disabled.
             TextView textView = (TextView) findViewById(R.id.gps_disabled_warning);
             textView.setVisibility(View.VISIBLE);
         }
@@ -273,7 +282,6 @@ public class MainActivity extends AppCompatActivity {
         if (serviceConnection != null) {
             Log.d("G53MDP", "unbinding from service");
             unbindService(serviceConnection);
-            //locationServiceBinder = null;
         }
         //Stop the service.
         Intent intent = new Intent(MainActivity.this, LocationService.class);

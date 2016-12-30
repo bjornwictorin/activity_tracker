@@ -14,8 +14,8 @@ public class MyReceiver extends BroadcastReceiver {
         // TODO: This method is called when the BroadcastReceiver is receiving
         // an Intent broadcast.
         //Start the LocationService when the phone has booted.
-            Log.d("G53MDP", "The service was started.");
-            Intent serviceIntent = new Intent(context, LocationService.class);
-            context.startService(serviceIntent);
+        Intent serviceIntent = new Intent(context, LocationService.class);
+        context.startService(serviceIntent);
+        Log.d("G53MDP", "MyReceiver tried to start the service.");
     }
 }

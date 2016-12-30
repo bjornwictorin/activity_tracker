@@ -92,14 +92,15 @@ public class MainActivity extends AppCompatActivity {
                 new IntentFilter("gps_enabled_intent"));
 
         //Check whether the gps is enabled and show or hide the warning message accordingly.
-        //Inform the user if the GPS is disabled when the activity is created.
+        //Inform the user if the GPS is disabled.
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             //Hide warning message if GPS is enabled.
             TextView textView = (TextView) findViewById(R.id.gps_disabled_warning);
             textView.setVisibility(View.GONE);
         } else {
-            Log.d("G53MDP", "gps disabled in onResume");
+            //Show warnings if GPS is disabled.
+            Log.d("G53MDP", "gps is disabled, noticed in onResume");
             Toast toast = Toast.makeText(this, getString(R.string.gps_disabled_message), Toast.LENGTH_LONG);
             toast.show();
             TextView textView = (TextView) findViewById(R.id.gps_disabled_warning);
@@ -119,15 +120,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void updateDistanceToday() {
         TextView textView = (TextView) findViewById(R.id.distance_today);
-        double distanceTodayInMetres = calculator.distanceToday();
-        double distanceTodayInKilometres = distanceTodayInMetres / 1000;
+        double distanceTodayInKilometres = calculator.distanceToday();
         //Only show two decimal places.
         String distanceFormatted = String.format(Locale.ENGLISH, "%.2f", distanceTodayInKilometres);
         textView.setText(getString(R.string.distance_today) + " " + distanceFormatted + " km");
     }
 
     //The purpose of this class is to update the distance values showed in the activity only when
-    // data has changed.
+    //data in the content provider has changed.
     private class MyObserver extends ContentObserver {
         MyObserver(Handler handler) {
             super(handler);
@@ -172,13 +172,14 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    //Service connection to handle the connection to the location service.
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.d("G53MDP", "onServiceConnected");
             locationServiceBinder = (LocationService.MyBinder) service;
             //Update the displayed values of the distances as soon as the activity is connected to
-            // the content provider.
+            //the content provider.
             updateDistanceToday();
             updateWeekGraph();
         }
@@ -222,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
             if (isValueX) {
                 int pos = (int) value;
                 //Returns the first letter of the weekday that corresponds to the date in
-                // dateArray at the index pos.
+                //dateArray at the index pos.
                 return (new SimpleDateFormat("EE", Locale.ENGLISH).format(dateArray[pos]).substring(0, 1));
             } else {
                 return super.formatLabel(value, false);

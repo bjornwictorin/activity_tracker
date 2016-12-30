@@ -24,7 +24,6 @@ public class LocationService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.d("G53MDP", "LocationService onCreate");
-
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationListener = new MyLocationListener(this);
         //Register the locationListener, which will listen to the GPS updates.
@@ -59,6 +58,4 @@ public class LocationService extends Service {
     public class MyBinder extends Binder {
         //Place the methods that should be callable from activities here.
     }
-
-
 }

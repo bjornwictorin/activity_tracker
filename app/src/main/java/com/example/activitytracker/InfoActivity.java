@@ -37,14 +37,13 @@ public class InfoActivity extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
-        //Unregister the ContentObserver to avoid memory leak.
+        //Unregister the ContentObserver to avoid a memory leak.
         getContentResolver().unregisterContentObserver(myObserver);
     }
 
     public void updateDailyAverage() {
         TextView textView = (TextView) findViewById(R.id.daily_average_last_week);
-        double averageInMetres = calculator.dailyAverageLastWeek();
-        double averageInKilometres = averageInMetres / 1000;
+        double averageInKilometres = calculator.dailyAverageLastWeek();
         //Only show two decimal places.
         String distanceFormatted = String.format(Locale.ENGLISH, "%.2f", averageInKilometres);
         textView.setText(getString(R.string.daily_average_last_week) +
@@ -61,7 +60,7 @@ public class InfoActivity extends AppCompatActivity {
     }
 
     //The purpose of this class is to update the distance values showed in the activity only when
-    // data has changed.
+    //data has changed.
     private class MyObserver extends ContentObserver {
         MyObserver(Handler handler) {
             super(handler);

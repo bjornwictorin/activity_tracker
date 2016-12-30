@@ -14,13 +14,13 @@ import android.util.Log;
  * Created by Björn on 2016-12-06.
  */
 
-public class MyLocationListener implements LocationListener {
+class MyLocationListener implements LocationListener {
 
     //Reference to the service that instanced this class. This reference is needed in order to do
     // calls on the content provider.
-    Service instancingService = null;
+    private Service instancingService = null;
 
-    public MyLocationListener(Service s){
+    MyLocationListener(Service s){
         super();
         instancingService = s;
     }
@@ -33,7 +33,6 @@ public class MyLocationListener implements LocationListener {
         values.put(LocationProviderContract.LATITUDE, location.getLatitude());
         values.put(LocationProviderContract.LONGITUDE, location.getLongitude());
         values.put(LocationProviderContract.ALTITUDE, location.getAltitude());
-        //values.put(LocationProviderContract.TIMESTAMP, 0);
         //Write to database.
         Uri newLocationUri = instancingService.getContentResolver().
                 insert(LocationProviderContract.LOCATION_URI, values);
@@ -47,7 +46,8 @@ public class MyLocationListener implements LocationListener {
     @Override
     public void onProviderEnabled(String provider) {
         Log.d("G53MDP", "onProviderEnabled " + provider);
-        //Send local broadcast to notify the user that the GPS is enabled.
+        //Send local broadcast to notify the user that the GPS is enabled. The broadcast receiver
+        //is located in the main activity.
         LocalBroadcastManager bcManager =
                 LocalBroadcastManager.getInstance(instancingService.getApplicationContext());
         Intent intent = new Intent("gps_enabled_intent");
@@ -56,7 +56,8 @@ public class MyLocationListener implements LocationListener {
 
     public void onProviderDisabled(String provider) {
         Log.d("G53MDP", "onProviderDisabled " + provider);
-        //Send local broadcast to notify the user that the GPS is disabled.
+        //Send local broadcast to notify the user that the GPS is disabled. The broadcast receiver
+        //is located in the main activity.
         LocalBroadcastManager bcManager =
                 LocalBroadcastManager.getInstance(instancingService.getApplicationContext());
         Intent intent = new Intent("gps_disabled_intent");

@@ -13,7 +13,9 @@ import java.util.ArrayList;
  */
 
 //This class carries out distance calculations, and gets its information by querying the
-//content provider.
+//content provider. This class was implemented as a separate class in order to reduce the amount
+//of code in the activities and to make the methods callable from all activities.
+
 class DistanceCalculator {
     //This activity is used to access the content provider.
     private Activity instantiatingActivity = null;
@@ -27,7 +29,8 @@ class DistanceCalculator {
     }
 
     //Calculates the average distance per day for the last 7 days. If a day has a distance
-    // of 0, it will not be taken into account in the calculation of the average.
+    //of 0, it will not be taken into account in the calculation of the average.
+    //The returned value is in km.
     double dailyAverageLastWeek() {
         double totalWeekDistance = 0;
         int nonZeroDays = 0;
@@ -49,8 +52,8 @@ class DistanceCalculator {
         return verticalDistancePerDay(0);
     }
 
+    //Fills an array with the distances for the last 7 days. Distances in km.
     double[] distancePerDaySevenDays() {
-        //Fill an array with the distances for the last 7 days. Distances in km.
         double[] lastWeekDistances = new double[7];
         for (int i = 0; i < 7; i++) {
             //Have to be in reverse order in order to plot the latest day last in the graph.
@@ -84,7 +87,7 @@ class DistanceCalculator {
         return coordinatesToday;
     }
 
-    //Returns a list containing all timestamps logged daysAgo days ago.
+    //Returns a list containing all timestamps (as strings) logged daysAgo days ago.
     ArrayList<String> getTimestampsPerDay(int daysAgo) {
         //The list to return.
         ArrayList<String> timestampsToday = new ArrayList<>();
@@ -109,9 +112,10 @@ class DistanceCalculator {
         return timestampsToday;
     }
 
+    //Calculate the distance that the device has moved during the specified day.
+    //Which day the data should be retrieved for is decided by the daysAgo parameter.
+    //The returned distance is in km.
     private double distancePerDay(int daysAgo) {
-        //Calculate the distance that the device has moved during the specified day.
-        //Which day the data should be retrieved for is decided by the daysAgo parameter.
         //Fetch all locations that were recorded today from the database.
         String[] projection = {LocationProviderContract._ID, LocationProviderContract.LONGITUDE,
                 LocationProviderContract.LATITUDE};
@@ -140,12 +144,12 @@ class DistanceCalculator {
         if (cursor != null) {
             cursor.close();
         }
-        return distanceToday;
+        return distanceToday / 1000;
     }
 
+    //Calculates the vertical distance that the device has moved during the specified day.
+    //Which day the data should be retrieved for is decided by the daysAgo parameter.
     private double verticalDistancePerDay(int daysAgo) {
-        //Calculates the vertical distance that the device has moved during the specified day.
-        //Which day the data should be retrieved for is decided by the daysAgo parameter.
         //The vertical distance is based in the altitude measurements from the GPS.
         String[] projection = {LocationProviderContract.ALTITUDE};
         String selection = " date(" + LocationProviderContract.TIMESTAMP +

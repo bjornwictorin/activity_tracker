@@ -57,7 +57,7 @@ class DistanceCalculator {
         double[] lastWeekDistances = new double[7];
         for (int i = 0; i < 7; i++) {
             //Have to be in reverse order in order to plot the latest day last in the graph.
-            lastWeekDistances[i] = distancePerDay(6 - i) / 1000;
+            lastWeekDistances[i] = distancePerDay(6 - i);
         }
         return lastWeekDistances;
     }

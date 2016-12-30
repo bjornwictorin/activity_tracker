@@ -37,6 +37,15 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="#ff0000"
+        android:layout_gravity="left"
+        android:visibility="gone"
+        android:text="@string/gps_no_permission_message"
+        android:id="@+id/gps_no_permission_warning" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
         android:layout_gravity="left"
         android:id="@+id/distance_today" />

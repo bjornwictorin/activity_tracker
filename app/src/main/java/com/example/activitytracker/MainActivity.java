@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.database.ContentObserver;
 import android.graphics.Color;
 import android.location.LocationManager;
@@ -13,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -102,6 +104,16 @@ public class MainActivity extends AppCompatActivity {
             toast.show();
             TextView textView = (TextView) findViewById(R.id.gps_disabled_warning);
             textView.setVisibility(View.VISIBLE);
+        }
+
+        //Check that the permission ACCESS_FINE_LOCATION is granted, and show a warning message if it is not.
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED) {
+            TextView textView = (TextView) findViewById(R.id.gps_no_permission_warning);
+            textView.setVisibility(View.VISIBLE);
+        } else {
+            TextView textView = (TextView) findViewById(R.id.gps_no_permission_warning);
+            textView.setVisibility(View.GONE);
         }
     }
 

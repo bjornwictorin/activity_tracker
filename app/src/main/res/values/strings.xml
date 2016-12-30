@@ -12,4 +12,6 @@
     <string name="more_info">Show more activity info</string>
     <string name="map_button_text">View movement on a map</string>
     <string name="title_activity_maps">Map</string>
+    <string name="gps_no_permission_message">The permission ACCESS_FINE_LOCATION is required for this app to work.
+        Please grant it and restart the app.</string>
 </resources>

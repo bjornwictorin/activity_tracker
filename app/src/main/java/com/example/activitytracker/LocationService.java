@@ -27,7 +27,7 @@ public class LocationService extends Service {
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationListener = new MyLocationListener(this);
-        //Register the locationsListener, which will listen to the GPS updates.
+        //Register the locationListener, which will listen to the GPS updates.
         try {
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5, 5, locationListener);
         } catch (SecurityException e) {

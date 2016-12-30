@@ -295,6 +295,7 @@ public class MainActivity extends AppCompatActivity {
         if (serviceConnection != null) {
             Log.d("G53MDP", "unbinding from service");
             unbindService(serviceConnection);
+            serviceConnection = null;
         }
         //Stop the service.
         Intent intent = new Intent(MainActivity.this, LocationService.class);

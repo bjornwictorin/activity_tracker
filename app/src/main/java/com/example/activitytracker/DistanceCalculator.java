@@ -8,10 +8,6 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
-/**
- * Created by Björn on 2016-12-11.
- */
-
 //This class carries out distance calculations, and gets its information by querying the
 //content provider. This class was implemented as a separate class in order to reduce the amount
 //of code in the activities and to make the methods callable from all activities.

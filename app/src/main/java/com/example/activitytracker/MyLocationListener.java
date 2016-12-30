@@ -10,10 +10,6 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-/**
- * Created by Björn on 2016-12-06.
- */
-
 class MyLocationListener implements LocationListener {
 
     //Reference to the service that instanced this class. This reference is needed in order to do
